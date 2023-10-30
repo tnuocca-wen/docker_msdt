@@ -1,0 +1,37 @@
+# admin/pass are default user/password credentials for openemr
+# openemr is default mysql database
+# openemr/openemr are default user/password credentials for mysql openemr database
+version: '3.1'
+services:
+  mysql:
+    restart: always
+    image: mysql:latest
+    command: ['mysqld','--character-set-server=utf8']
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+  openemr:
+    restart: always
+    image: openemr/openemr:latest
+    ports:
+    - 80:80
+    - 443:443
+    volumes:
+    - logvolume01:/var/log
+    - sitevolume:/var/www/localhost/htdocs/openemr/sites
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_ROOT_PASS: root
+    links:
+    - mysql
+  phpmyadmin:
+    restart: always
+    image: phpmyadmin:latest
+    ports:
+    - 81:80
+    environment:
+      PMA_HOST: mysql
+    links:
+    - mysql
+volumes:
+  logvolume01: {}
+  sitevolume: {}
